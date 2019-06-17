@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bonc.LostContactHRSS.mapper.orcal.OrcalMapper">
+
+
+	<!--失联复联接口专用-->
+
+	<insert id="addMessionData" parameterType="java.util.Map">
+		INSERT INTO LOST_CONTACT_HRSS_MESSION (
+		serialid,
+		templateid,
+		type,
+		message_number,
+		idnomd5,
+		name,
+		variables
+		)
+		VALUES (
+		#{serialid},
+		#{templateid},
+		#{type},
+		#{id},
+		#{idno},
+		#{name},
+		#{variables}
+		)
+
+	</insert>
+
+	<!--将复联出来的所有数据插入复联表-->
+	<insert id="addPhoneData" parameterType="java.util.List">
+		INSERT INTO  LOST_CONTACT_HRSS_PHONE (
+		phonenum,
+  		idnomd5 ,
+  		facttablename,
+  		calltime ,
+  		onlinetime
+		)
+		<foreach  collection="list" item="item" index="index"  open="(" close=")" separator="union all">
+			SELECT #{item.DEVICE_NUMBER} , #{item.FIELDNAME} ,#{item.FACTTABLENAME} ,#{item.JF_TIMES} ,#{item.INNET_MONTHS_NEW}
+			FROM dual
+		</foreach>
+	</insert>
+
+	<!--插入所有复联全部的用户-->
+	<insert id="addResultDataAllUser" parameterType="java.util.Map">
+		INSERT INTO lost_contact_hrss_result(serialid,templateid,type,message_number,phone_number,send_time,idnomd5,name,variables,is_contact,is_send_message,fact_table_name)
+		SELECT a.serialid,a.templateid,a.type,a.message_number,phonenum,'',a.idnomd5,a.name,a.variables,'1','0',#{facttablename}
+		from lost_contact_hrss_mession a
+		join LOST_CONTACT_HRSS_PHONE b
+		on a.idnomd5 = b.idnomd5
+		where
+		a.serialid = #{serialid} and facttablename = #{facttablename}
+	</insert>
+
+	<!--插入复联再网时长最长的用户-->
+	<insert id="addResultDataMaxOnlineUser" parameterType="java.util.Map">
+    INSERT INTO lost_contact_hrss_result(serialid,templateid,type,message_number,phone_number,send_time,idnomd5,name,variables,is_contact,is_send_message,fact_table_name)
+	select d.serialid,d.templateid,d.type,d.message_number,c.phonenum,'',d.idnomd5,d.name,d.variables,'1','0',#{facttablename}
+    from lost_contact_hrss_mession d join
+    (
+    select max(phonenum) as phonenum ,a.idnomd5,max(facttablename) facttablename from LOST_CONTACT_HRSS_PHONE a,
+    (select idnomd5,max(to_number(onlinetime)) max_online_time from LOST_CONTACT_HRSS_PHONE group by idnomd5) b
+    where a.onlinetime = b.max_online_time
+    and a.idnomd5 = b.idnomd5
+    and a.facttablename =#{facttablename}
+    group by a.idnomd5
+    ) c  on d.idnomd5 = c.idnomd5 where d.serialid= #{serialid}
+	</insert>
+	<!--插入复联通话时长最长的用户-->
+	<insert id="addResultDataMaxCallUser" parameterType="java.util.Map">
+	INSERT INTO lost_contact_hrss_result(serialid,templateid,type,message_number,phone_number,send_time,idnomd5,name,variables,is_contact,is_send_message,fact_table_name)
+	select d.serialid,d.templateid,d.type,d.message_number,c.phonenum,'',d.idnomd5,d.name,d.variables,'1','0',#{facttablename}
+    from lost_contact_hrss_mession d join
+    (
+    select max(phonenum) as phonenum ,a.idnomd5,max(facttablename) facttablename from LOST_CONTACT_HRSS_PHONE a,
+    (select idnomd5,max(to_number(calltime)) max_call_time from LOST_CONTACT_HRSS_PHONE group by idnomd5) b
+    where a.calltime = b.max_call_time
+    and a.idnomd5 = b.idnomd5
+    and a.facttablename =#{facttablename}
+    group by a.idnomd5
+    ) c  on d.idnomd5 = c.idnomd5 where d.serialid= #{serialid}
+	</insert>
+
+
+	<!--插入所有未复联的用户-->
+	<insert id="addResultDataLost" parameterType="java.util.Map">
+		INSERT INTO lost_contact_hrss_result(serialid,templateid,type,message_number,phone_number,send_time,idnomd5,name,variables,is_contact,is_send_message,fact_table_name)
+		SELECT serialid,templateid,type,message_number,'',send_time,a.idnomd5,name,variables,'0','0',#{facttablename}
+ 		from lost_contact_hrss_mession a where not exists
+		(select 1 from LOST_CONTACT_HRSS_PHONE b where a.idnomd5 = b.idnomd5 and b.facttablename = #{facttablename})
+		 and a.serialid = #{serialid}
+	</insert>
+
+	<!--从结果表取得所有需要发送短信的数据-->
+
+	<select id="getResultData" parameterType="String" resultType="java.util.Map">
+		SELECT * FROM lost_contact_hrss_result WHERE serialid = #{_parameter} and IS_CONTACT = '1'
+	</select>
+
+	<!--获得短信模板内容-->
+	<select id="getSMStemplate" parameterType="String" resultType="String">
+		SELECT templatesms FROM LOST_CONTACT_HRSS_SMS_TEMPLATE WHERE templateid = #{_parameter}
+	</select>
+
+	<!--更新短信发送情况及发送时间-->
+	<update id="updateSend" parameterType="java.util.Map">
+		update lost_contact_hrss_result
+		set send_time = #{SEND_TIME}, is_send_message = #{IS_SEND_MESSAGE}
+		where serialid =#{SERIALID} and phone_number = #{PHONE_NUMBER}
+	</update>
+	<!--删除已经持久化至行云的所有数据-->
+	<delete id="deleteMession" parameterType="String">
+		DELETE lost_contact_hrss_mession where serialid = #{_parameter}
+	</delete>
+	<delete id="deletePhone" parameterType="String">
+		DELETE lost_contact_hrss_phone where facttablename = #{_parameter}
+	</delete>
+	<delete id="deleteResult" parameterType="String">
+		DELETE lost_contact_hrss_result where serialid = #{_parameter}
+	</delete>
+
+
+	<insert id="addLog">
+		${_parameter}
+	</insert>
+
+	<insert id="addLog2" parameterType="java.util.Map">
+		insert into lost_contact_hrss_log values(#{serialid},#{templateid},#{type},#{time})
+	</insert>
+
+
+	<select id="existSerialid" parameterType="String" resultType="int">
+		SELECT count(1) FROM lost_contact_hrss_log WHERE serialid = #{serialid}
+	</select>
+	<select id="existIdno" parameterType="java.util.Map" resultType="int">
+		SELECT count(1) FROM LOST_CONTACT_HRSS_MESSION WHERE serialid = #{serialid} and idnomd5 = #{idno}
+	</select>
+</mapper>

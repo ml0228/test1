@@ -1,0 +1,96 @@
+正式环境测试json
+{"serialid":"7802b744-8e5f-42c0-bf98-f4eff0ea3787","templateid":"AB01","type":"1","list":[{"id":"1234561","idno":"2FF4FA58AC10D42637F4472F55D064D7","name":"刘祚","variables":{"key1":"刘*","key2":"0101","key3":"2018年11月01日","key4":"沈阳市社会保险管理局"}},{"id":"1234562","idno":"70DBA070149D77A1B189B4387D51A6C4","name":"徐宝超","variables":{"key1":"徐*超","key2":"0202","key3":"2018年11月02日","key4":"沈阳市社会保险管理局2"}}]}
+
+测试环境测试json
+
+{
+    "serialid ": "7802b744-8e5f-42c0-bf98-f4eff0ea3787",
+    "templateid": "AB01",
+    "type": 0,
+    "list":  [
+        {
+            "id": "d816a63f-80e9-4763-bbfd-c21317a34000",
+            "idno": "00001975F964B966F16D286879C869BB",
+            "name": "王楠楠1",
+            "variables": {
+                "key1": "王*楠",
+                "key2": "909",
+                "key3": "2018年06月01日",
+                "key4": "沈阳市社会保险管理局"
+            },
+            "sms": null
+        },
+    {
+            "id": "d816a63f-80e9-4763-bbfd-c21317a34000",
+            "idno": "00001975F964B966F16D286879C869BB",
+            "name": "王楠楠1",
+            "variables": {
+                "key1": "王*楠",
+                "key2": "909",
+                "key3": "2018年06月01日",
+                "key4": "沈阳市社会保险管理局"
+            },
+            "sms": null
+        },
+        {
+            "id": "083c8710-1c7a-44ba-b079-7e6b29daf001",
+            "idno": "00003122DD0A8551BE09B3F9F60D069D",
+            "name": "王力2",
+            "variables": {
+                "key1": "王*",
+                "key2": "125",
+                "key3": "2018年06月09日",
+                "key4": "长春市医疗保险基金管理中心"
+            },
+            "sms": null
+        }
+		{
+            "id": "083c8710-1c7a-44ba-b079-7e6b29daf002",
+            "idno": "00005AD9855741CA28AC9E23CEF7EA62",
+            "name": "马林3",
+            "variables": {
+                "key1": "马*",
+                "key2": "125",
+                "key3": "2018年06月09日",
+                "key4": "长春市医疗保险基金管理中心"
+            },
+            "sms": null
+        }
+		{
+            "id": "083c8710-1c7a-44ba-b079-7e6b29daf003",
+            "idno": "000009D58A758B",
+            "name": "黄静4",
+            "variables": {
+                "key1": "黄*",
+                "key2": "125",
+                "key3": "2018年06月09日",
+                "key4": "长春市医疗保险基金管理中心"
+            },
+            "sms": null
+        }
+		{
+            "id": "083c8710-1c7a-44ba-b079-7e6b29daf004",
+            "idno": "852582298",
+            "name": "未复联2",
+            "variables": {
+                "key1": "黄*",
+                "key2": "125",
+                "key3": "2018年06月09日",
+                "key4": "长春市医疗保险基金管理中心"
+            },
+            "sms": null
+        }
+		{
+            "id": "083c8710-1c7a-44ba-b079-7e6b29daf005",
+            "idno": "852582ssssssssssssssssssssssssssssssssssssssssss2",
+            "name": "未复联1",
+            "variables": {
+                "key1": "黄*",
+                "key2": "125",
+                "key3": "2018年06月09日",
+                "key4": "长春市医疗保险基金管理中心"
+            },
+            "sms": null
+        }
+    ]
+}
