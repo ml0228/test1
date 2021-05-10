@@ -1,0 +1,17 @@
+
+      {
+        "field": "businessType",
+        "type": 2,
+        "name": "商家类型",
+        "value": "1",
+        "selectValues": [
+          {
+            "n": "all",
+            "v": "1"
+          },
+          {
+            "n": "事业群",
+            "v": "2"
+          }
+        ]
+      },
